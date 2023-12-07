@@ -43,6 +43,11 @@ namespace BCTest.Controllers
 			return Ok(response);
 		}
 
-
+        [HttpPut]
+        public async Task<IActionResult> UpdateCarBrand(CarBrand carBrand)
+        {
+			var response = await _carBrandServices.UpdateCarBrand(carBrand);
+			return Ok(response);
+		}
 	}
 }
