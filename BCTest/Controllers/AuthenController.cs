@@ -16,7 +16,6 @@ namespace BCTest.Controllers
     {
         private readonly Uri path = new Uri("https://api.businesscentral.dynamics.com/v2.0/873a7c07-4a74-4222-a9a0-22c8560049e0/Sandbox/api/phuong/demo/v2.0/carBrands?company=CRONUS%20USA%2C%20Inc.");
         private readonly TokenServices _tokenServices;
-        public string? Token { get; set; }
 
         public AuthenController(TokenServices tokenServices)
         {
@@ -37,8 +36,8 @@ namespace BCTest.Controllers
 
             if (!code.IsNullOrEmpty())
             {
-                Token = await _tokenServices.GetToken(code);
-                return Ok(Token);
+                string token = await _tokenServices.GetToken(code);
+                return Ok(token);
             }
             return NotFound();
         }
@@ -49,17 +48,5 @@ namespace BCTest.Controllers
         {
             return Ok();
         }
-    }
-    public class Response<T> where T : class 
-    {
-        public string? Context { get; set; }
-        public T? Value { get; set; }
-    }
-    public class CarBrand
-    {
-        public Guid? Id { get; set; }
-        public string? Name { get; set; }
-        public string? Description { get; set; }
-        public string? Country { get; set; }
     }
 }

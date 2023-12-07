@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Azure.Identity;
+using BCTest.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Identity.Client;
 using Microsoft.Identity.Web;
@@ -42,6 +43,8 @@ namespace BCTest.Services
                 .ExecuteAsync();
 
             string token = result.AccessToken;
+            AuthenTokenModel.AccessToken = token;
+            AuthenTokenModel.RefeshToken = result.SpaAuthCode;
 
             return token;
         }
