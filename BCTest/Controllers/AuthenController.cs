@@ -1,12 +1,7 @@
 ﻿using BCTest.Services;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Identity.Client;
-using Microsoft.Identity.Web.Resource;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
-using System.Text.Json;
+
 
 namespace BCTest.Controllers
 {
@@ -14,7 +9,6 @@ namespace BCTest.Controllers
     [ApiController]
     public class AuthenController : ControllerBase
     {
-        private readonly Uri path = new Uri("https://api.businesscentral.dynamics.com/v2.0/873a7c07-4a74-4222-a9a0-22c8560049e0/Sandbox/api/phuong/demo/v2.0/carBrands?company=CRONUS%20USA%2C%20Inc.");
         private readonly TokenServices _tokenServices;
 
         public AuthenController(TokenServices tokenServices)
@@ -40,13 +34,6 @@ namespace BCTest.Controllers
                 return Ok(token);
             }
             return NotFound();
-        }
-
-        [Authorize(Roles = "Manager")]
-        [HttpGet("test")]
-        public IActionResult SetProduct()
-        {
-            return Ok();
         }
     }
 }
