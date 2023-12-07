@@ -26,7 +26,9 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddMicrosoftIdentityWebApi(builder.Configuration);
+.AddMicrosoftIdentityWebApi(builder.Configuration)
+.EnableTokenAcquisitionToCallDownstreamApi()
+.AddInMemoryTokenCaches();
 
 
 builder.Services.AddAuthorization();

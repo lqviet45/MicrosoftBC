@@ -16,7 +16,7 @@ namespace BCTest.Services
         public async Task<List<CarBrand>> GetAllCarBrand()
         {
             List<CarBrand> carBrands = new List<CarBrand>();
-            var url = "/Sandbox/api/phuong/demo/v2.0/carBrands?$top=2000&company=CRONUS%20USA%2C%20Inc.";
+            var url = "/Sandbox/api/phuong/demo/v2.0/carBrands?$top=2&company=CRONUS%20USA%2C%20Inc.";
             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(BaseUri + url);
             //client.DefaultRequestHeaders.Authorization = new($"bearer {AuthenTokenModel.AccessToken}");
@@ -34,6 +34,22 @@ namespace BCTest.Services
             }
 
             return carBrands;
+        }
+
+        public async Task<bool> DeleteCarBrand(string carBrandId)
+        {
+            bool isDeleted = false;
+            var url = $"/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands({carBrandId})";
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(BaseUri + url);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.AccessToken}");
+            var response = await client.DeleteAsync(client.BaseAddress);
+
+            if (response.IsSuccessStatusCode)
+            {
+                isDeleted = true;
+            }
+            return isDeleted;
         }
     }
 }

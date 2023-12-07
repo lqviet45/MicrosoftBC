@@ -9,17 +9,29 @@ namespace BCTest.Controllers
     public class CarBrandController : ControllerBase
     {
         private readonly CarBrandServices _carBrandServices;
+        private readonly TokenServices _tokenServices;
 
-        public CarBrandController(CarBrandServices carBrandServices)
+        public CarBrandController(CarBrandServices carBrandServices, TokenServices tokenServices)
         {
             _carBrandServices = carBrandServices;
+            _tokenServices = tokenServices;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()       
         {
             var listResponse = await _carBrandServices.GetAllCarBrand();
             return Ok(listResponse);
+        }
+
+        [HttpDelete("{carBrandId}")]
+        public async Task<IActionResult> DeleteCarBrand(string carBrandId)
+        {
+            var isSuccess = await _carBrandServices.DeleteCarBrand(carBrandId);
+
+            if (isSuccess) return NoContent();
+
+            return NotFound(isSuccess);
         }
     }
 }

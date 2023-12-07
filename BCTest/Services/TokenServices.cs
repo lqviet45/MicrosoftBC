@@ -1,13 +1,9 @@
-﻿using Azure.Core;
-using Azure.Identity;
-using BCTest.Models;
+﻿using BCTest.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Identity.Client;
+using Microsoft.Identity.Client.Extensibility;
 using Microsoft.Identity.Web;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Text.Json.Nodes;
-using System.Web;
+
 
 namespace BCTest.Services
 {
@@ -39,12 +35,15 @@ namespace BCTest.Services
                 .WithRedirectUri(redirectUri)
                 .WithAuthority(new Uri(URL))
                 .Build();
+
             var result = await pca.AcquireTokenByAuthorizationCode(scope, code)
+                .WithSpaAuthorizationCode()
                 .ExecuteAsync();
 
             string token = result.AccessToken;
             AuthenTokenModel.AccessToken = token;
-            AuthenTokenModel.RefeshToken = result.SpaAuthCode;
+            AuthenTokenModel.AuthCode = code;
+            AuthenTokenModel.TokenExpriedDate = result.ExpiresOn;
 
             return token;
         }
@@ -66,8 +65,7 @@ namespace BCTest.Services
                 .WithRedirectUri(redirectUri)
                 .WithClientSecret(clientSecret)
                 .WithAuthority(new Uri(URL))
-                .Build();
-
+                .Build();           
             var authProps = new AuthenticationProperties
             {
                 RedirectUri = redirectUri,
@@ -80,5 +78,46 @@ namespace BCTest.Services
             return uri.ToString();
         }
 
+        public async Task<string> GetNewAccessToken()
+        {
+            string clientId = _configuration["AzureAd:ClientId"] ?? throw new ArgumentNullException("The client Id is null!!");
+            string tenantId = _configuration["AzureAd:TenantId"] ?? throw new ArgumentNullException("The tenant Id is null!!");
+            string clientSecret = _configuration["AzureAd:ClientCredentials:ClientSecret"] ?? throw new ArgumentNullException("The client secret is null!!");
+            string URL = $"https://login.microsoftonline.com/{tenantId}";
+
+            string[] scope = _configuration.GetSection("AzureAd:Scopes").Get<string[]>() ??
+                throw new ArgumentNullException("The scopes is null");
+
+            var cca = ConfidentialClientApplicationBuilder
+                .Create(clientId)
+                .WithClientSecret(clientSecret)
+                .WithAuthority(new Uri(URL))
+                .Build();
+
+
+            if (AuthenTokenModel.AccessToken is null)
+            {
+                return string.Empty;
+            }
+
+            var assertion = new UserAssertion(AuthenTokenModel.AccessToken);
+
+            try
+            {              
+                var result = await cca.AcquireTokenOnBehalfOf(scope, assertion)
+                    .ExecuteAsync();
+
+
+                string token = result.AccessToken;
+                AuthenTokenModel.AccessToken = token;
+                AuthenTokenModel.TokenExpriedDate = result.ExpiresOn;
+
+                return token;
+            }
+            catch(MsalUiRequiredException)
+            {
+                return string.Empty;
+            }
+        }
     }
 }
