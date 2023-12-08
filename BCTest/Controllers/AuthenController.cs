@@ -17,11 +17,11 @@ namespace BCTest.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetAccessToken()
+        public async Task<IActionResult> GetAccessToken(string redirectUri)
         {
-            var token = await _tokenServices.LoginMicrosoft();
+            var url = await _tokenServices.LoginMicrosoft(redirectUri);
 
-            return Ok(token);
+            return Ok(url);
         }
 
         [HttpGet("callback")]

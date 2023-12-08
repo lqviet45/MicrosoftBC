@@ -1,3 +1,4 @@
+using BCTest.Middelware;
 using BCTest.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -11,8 +12,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<TokenServices>();
+builder.Services.AddSingleton<TokenServices>();
 builder.Services.AddScoped<CarBrandServices>();
+builder.Services.AddScoped<TokenApplicationServices>();
 
 builder.Services.AddCors(options =>
 {
@@ -46,6 +48,7 @@ app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseAuthentication();
+app.UseValitokenMiddleware();
 app.UseAuthorization();
 
 app.MapControllers();

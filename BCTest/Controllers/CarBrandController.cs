@@ -18,9 +18,17 @@ namespace BCTest.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()       
+        public async Task<IActionResult> GetAll()
         {
+            var isSuccess = HttpContext.Items.TryGetValue("Token", out object? newToken);
+
             var listResponse = await _carBrandServices.GetAllCarBrand();
+
+            if (isSuccess && newToken != null)
+            {
+                var token = newToken.ToString();
+                return Ok(new { listResponse, token });
+            }
             return Ok(listResponse);
         }
 
