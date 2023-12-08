@@ -1,5 +1,6 @@
 ﻿using BCTest.Models;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace BCTest.Services
 {
@@ -59,5 +60,58 @@ namespace BCTest.Services
             }
             return isDeleted;
         }
-    }
+
+
+		public async Task<CarBrand> InsertCarBrand(CarBrand carBrand)
+		{
+			var url = "/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands";
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(BaseUri + url);
+			client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.AccessToken}");
+
+			var json = JsonConvert.SerializeObject(carBrand);
+			var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+			var response = await client.PostAsync(client.BaseAddress, data);
+			if (response.IsSuccessStatusCode)
+			{
+				var result = await response.Content.ReadAsStringAsync();
+				var insertedCarBrand = JsonConvert.DeserializeObject<CarBrand>(result);
+
+				if (insertedCarBrand is null) return null;
+
+				return insertedCarBrand;
+			}
+
+			return null;
+		}
+
+
+        public async Task<CarBrand> UpdateCarBrand(CarBrand carBrand)
+        {
+			var url = $"/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands({carBrand.Id})";
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(BaseUri + url);
+			client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.AccessToken}");
+            client.DefaultRequestHeaders.Add("If-Match", "*");
+
+			var json = JsonConvert.SerializeObject(carBrand);
+			var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+			var response = await client.PutAsync(client.BaseAddress, data);
+			if (response.IsSuccessStatusCode)
+            {
+				var result = await response.Content.ReadAsStringAsync();
+				var updatedCarBrand = JsonConvert.DeserializeObject<CarBrand>(result);
+
+				if (updatedCarBrand is null) return null;
+
+				return updatedCarBrand;
+			}
+
+			return null;
+		}
+
+
+	}
 }

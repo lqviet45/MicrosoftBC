@@ -1,4 +1,5 @@
-﻿using BCTest.Services;
+﻿using BCTest.Models;
+using BCTest.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,5 +42,20 @@ namespace BCTest.Controllers
 
             return NotFound(isSuccess);
         }
-    }
+
+
+		[HttpPost]
+		public async Task<IActionResult> InsertCarBrand(CarBrand carBrand)
+		{
+			var response = await _carBrandServices.InsertCarBrand(carBrand);
+			return Ok(response);
+		}
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateCarBrand(CarBrand carBrand)
+        {
+			var response = await _carBrandServices.UpdateCarBrand(carBrand);
+			return Ok(response);
+		}
+	}
 }
