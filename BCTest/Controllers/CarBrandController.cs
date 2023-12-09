@@ -60,5 +60,20 @@ namespace BCTest.Controllers
 			var response = await _carBrandServices.UpdateCarBrand(carBrand);
 			return Ok(response);
 		}
+
+        [HttpGet("page")]
+        public async Task<IActionResult> GetCarBrandByPage(int? pageSize , int? page)
+        {
+			// Set default values if not provided
+			int defaultPageSize = 100;
+			int defaultPage = 1;
+
+			// If pageSize or page is not provided, use default values
+			int actualPageSize = pageSize ?? defaultPageSize;
+			int actualPage = page ?? defaultPage;
+
+			var response = await _carBrandServices.GetPagedCarBrands(actualPageSize, actualPage);
+			return Ok(response);
+		}
 	}
 }

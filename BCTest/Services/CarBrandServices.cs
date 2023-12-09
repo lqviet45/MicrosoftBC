@@ -88,6 +88,7 @@ namespace BCTest.Services
 		public async Task<CarBrand?> InsertCarBrand(CarBrand carBrand)
 		{
             await _tokenApplicationServices.GetBCConectionToken();
+
 			var url = "/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands";
 			var client = _httpClientFactory.CreateClient();
 			client.BaseAddress = new Uri(BaseUri + url);
@@ -114,6 +115,7 @@ namespace BCTest.Services
         public async Task<CarBrand?> UpdateCarBrand(CarBrand carBrand)
         {
             await _tokenApplicationServices.GetBCConectionToken();
+
 			var url = $"/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands({carBrand.Id})";
 			var client = _httpClientFactory.CreateClient();
 			client.BaseAddress = new Uri(BaseUri + url);
@@ -135,6 +137,31 @@ namespace BCTest.Services
 			}
 
 			return null;
+		}
+
+		public async Task<List<CarBrand>> GetPagedCarBrands(int numOfRecords, int currentPage)
+		{
+			await _tokenApplicationServices.GetBCConectionToken();
+
+			List<CarBrand> carBrands = new List<CarBrand>();
+			var url = $"/Sandbox/api/phuong/demo/v2.0/carBrands?$top={numOfRecords}&$skip={(currentPage - 1) * numOfRecords}&company=CRONUS%20USA%2C%20Inc.";
+			var client = _httpClientFactory.CreateClient();
+			client.BaseAddress = new Uri(BaseUri + url);
+			client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.BusinessCentralAccessToken}");
+
+			var response = await client.GetAsync(client.BaseAddress);
+			if (response.IsSuccessStatusCode)
+			{
+				var data = await response.Content.ReadAsStringAsync();
+				var responseObject = JsonConvert.DeserializeObject<Response<List<CarBrand>>>(data);
+
+				if (responseObject != null && responseObject.Value != null)
+				{
+					carBrands = responseObject.Value;
+				}
+			}
+
+			return carBrands;
 		}
 
 
