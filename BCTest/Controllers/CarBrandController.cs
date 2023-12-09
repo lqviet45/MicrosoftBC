@@ -61,19 +61,30 @@ namespace BCTest.Controllers
 			return Ok(response);
 		}
 
-        [HttpGet("page")]
-        public async Task<IActionResult> GetCarBrandByPage(int? pageSize , int? page)
-        {
+		[HttpGet("page")]
+		public async Task<IActionResult> GetCarBrandByPage(int? pageSize, int? page, string? orderBy = null, string? filterby = null, string? filterString = null)
+		{
 			// Set default values if not provided
 			int defaultPageSize = 100;
 			int defaultPage = 1;
+			string defaultOrderBy = "name"; // Set default orderBy to "name"
 
 			// If pageSize or page is not provided, use default values
 			int actualPageSize = pageSize ?? defaultPageSize;
 			int actualPage = page ?? defaultPage;
+			string actualOrderBy = string.IsNullOrWhiteSpace(orderBy) ? defaultOrderBy : orderBy;
 
-			var response = await _carBrandServices.GetPagedCarBrands(actualPageSize, actualPage);
-			return Ok(response);
+			// Call the service method to get the paged car brands
+			var response = await _carBrandServices.GetPagedCarBrands(actualPageSize, actualPage, actualOrderBy, filterby, filterString);
+
+			// Handle the response from the service
+			if (response != null)
+			{
+				return Ok(response);
+			}
+
+			return BadRequest("Failed to retrieve data");
 		}
+
 	}
 }

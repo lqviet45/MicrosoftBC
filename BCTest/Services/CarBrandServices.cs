@@ -139,14 +139,27 @@ namespace BCTest.Services
 			return null;
 		}
 
-		public async Task<List<CarBrand>> GetPagedCarBrands(int numOfRecords, int currentPage)
+		public async Task<List<CarBrand>> GetPagedCarBrands(int numOfRecords, int currentPage, string? orderBy = null , string? filterBy = null, string? filterString = null)
 		{
 			await _tokenApplicationServices.GetBCConectionToken();
 
 			List<CarBrand> carBrands = new List<CarBrand>();
-			var url = $"/Sandbox/api/phuong/demo/v2.0/carBrands?$top={numOfRecords}&$skip={(currentPage - 1) * numOfRecords}&company=CRONUS%20USA%2C%20Inc.";
+
+			// Build the URL based on parameters
+			var urlBuilder = new StringBuilder($"/Sandbox/api/phuong/demo/v2.0/carBrands?$top={numOfRecords}&$skip={(currentPage - 1) * numOfRecords}&company=CRONUS%20USA%2C%20Inc.");
+
+			// Add OrderBy to the URL if provided
+			urlBuilder.Append($"&$orderby={orderBy}");
+
+			// Add Filter to the URL if provided
+			if (!string.IsNullOrWhiteSpace(filterBy) && !string.IsNullOrEmpty(filterString))
+			{
+				// Note: You may need to handle special characters and encoding based on your requirements
+				urlBuilder.Append($"&$filter={filterBy} eq '{filterString}'");
+			}
+
 			var client = _httpClientFactory.CreateClient();
-			client.BaseAddress = new Uri(BaseUri + url);
+			client.BaseAddress = new Uri(BaseUri + urlBuilder.ToString());
 			client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.BusinessCentralAccessToken}");
 
 			var response = await client.GetAsync(client.BaseAddress);
@@ -163,6 +176,7 @@ namespace BCTest.Services
 
 			return carBrands;
 		}
+
 
 
 	}
