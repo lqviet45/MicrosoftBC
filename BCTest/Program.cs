@@ -1,4 +1,3 @@
-using BCTest.Middelware;
 using BCTest.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Web;
@@ -48,7 +47,6 @@ app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseAuthentication();
-app.UseValitokenMiddleware();
 app.UseAuthorization();
 
 app.MapControllers();

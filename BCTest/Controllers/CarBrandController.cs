@@ -21,16 +21,19 @@ namespace BCTest.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var isSuccess = HttpContext.Items.TryGetValue("Token", out object? newToken);
-
             var listResponse = await _carBrandServices.GetAllCarBrand();
-
-            if (isSuccess && newToken != null)
-            {
-                var token = newToken.ToString();
-                return Ok(new { listResponse, token });
-            }
             return Ok(listResponse);
+        }
+
+        [HttpGet("{carBrandId}")]
+        public async Task<IActionResult> GetByBarcodeId(string carBrandId)
+        {
+            var carBrand = await _carBrandServices.GetCarBrandByBarcodeId(carBrandId);
+            if (carBrand is null)
+            {
+                return NotFound($"The car brand with this {carBrandId} doesn't exist!");
+            }
+            return Ok(carBrand);
         }
 
         [HttpDelete("{carBrandId}")]

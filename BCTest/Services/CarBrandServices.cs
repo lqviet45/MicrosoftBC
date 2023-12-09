@@ -1,5 +1,6 @@
 ﻿using BCTest.Models;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Text;
 
 namespace BCTest.Services
@@ -41,6 +42,28 @@ namespace BCTest.Services
             }
 
             return carBrands;
+        }
+
+        public async Task<CarBrand?> GetCarBrandByBarcodeId(string carBrandId)
+        {
+            await _tokenApplicationServices.GetBCConectionToken();
+
+            var url = $"/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands({carBrandId})";
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(BaseUri + url);
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.BusinessCentralAccessToken}");
+            var response = await client.GetAsync(client.BaseAddress);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var responseJson = JsonConvert.DeserializeObject<CarBrand>(data);
+                return responseJson;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public async Task<bool> DeleteCarBrand(string carBrandId)
