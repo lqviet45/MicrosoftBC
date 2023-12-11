@@ -1,4 +1,5 @@
-﻿using BCTest.Models;
+﻿using BCTest.Helper;
+using BCTest.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
@@ -25,12 +26,11 @@ namespace BCTest.Services
             await _tokenApplicationServices.GetBCConectionToken();
 
             List<CarBrand> carBrands = [];
-            var url = "/Sandbox/api/phuong/demo/v2.0/carBrands?$top=2&company=CRONUS%20USA%2C%20Inc.";
+            var url = "/Sandbox/api/phuong/demo/v2.0/carBrands?$top=500&company=CRONUS%20USA%2C%20Inc.";
             var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(BaseUri + url);
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.BusinessCentralAccessToken}");
+            var uri = new Uri(BaseUri + url);
 
-            var response = await client.GetAsync(client.BaseAddress);
+            var response = await BusinessCentralClientCall.CallApi(client, uri, Method.GET);
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();

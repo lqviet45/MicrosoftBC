@@ -1,6 +1,7 @@
 ﻿using Azure.Core;
 using Azure.Identity;
 using BCTest.Models;
+using Microsoft.Identity.Client;
 
 namespace BCTest.Services
 {
