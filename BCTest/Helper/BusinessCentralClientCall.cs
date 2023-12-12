@@ -4,9 +4,9 @@ using System.Text;
 
 namespace BCTest.Helper
 {
-    public static class BusinessCentralClientCall
+    public static class BusinessCentralClientCall<T> where T : class
     {
-        public static async Task<HttpResponseMessage> CallApi(HttpClient httpClient, Uri url, Method method, object? obj = null)
+        public static async Task<HttpResponseMessage> CallApi(HttpClient httpClient, Uri url, Method method, T? obj = null)
         {
             if ((method == Method.PUT || method == Method.POST) && obj is null)
             {
