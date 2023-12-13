@@ -141,14 +141,14 @@ namespace BCTest.Services
 			return null;
 		}
 
-		public async Task<List<CarBrand>> GetPagedCarBrands(int numOfRecords, int currentPage, string? orderBy = null , string? filterBy = null, string? filterString = null)
+		public async Task<CarBrandResponse> GetPagedCarBrands(int numOfRecords, int currentPage, string? orderBy = null, string? filterBy = null, string? filterString = null)
 		{
 			await _tokenApplicationServices.GetBCConectionToken();
 
-			List<CarBrand> carBrands = new List<CarBrand>();
+			CarBrandResponse result = new CarBrandResponse();
 
 			// Build the URL based on parameters
-			var urlBuilder = new StringBuilder($"/Sandbox/api/phuong/demo/v2.0/carBrands?$top={numOfRecords}&$skip={(currentPage - 1) * numOfRecords}&company=CRONUS%20USA%2C%20Inc.");
+			var urlBuilder = new StringBuilder($"/Sandbox/api/phuong/demo/v2.0/carBrands?$count=true&$top={numOfRecords}&$skip={(currentPage - 1) * numOfRecords}&company=CRONUS%20USA%2C%20Inc.");
 
 			// Add OrderBy to the URL if provided
 			urlBuilder.Append($"&$orderby={orderBy}");
@@ -165,6 +165,7 @@ namespace BCTest.Services
 			client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.BusinessCentralAccessToken}");
 
 			var response = await client.GetAsync(client.BaseAddress);
+			int TotalRecords = 0;
 			if (response.IsSuccessStatusCode)
 			{
 				var data = await response.Content.ReadAsStringAsync();
@@ -172,11 +173,20 @@ namespace BCTest.Services
 
 				if (responseObject != null && responseObject.Value != null)
 				{
-					carBrands = responseObject.Value;
+					result.CarBrands = responseObject.Value;
 				}
+
+				// Extract total records from the response headers
+				if (responseObject != null && responseObject.OdataCount >= 0)
+				{
+					 TotalRecords = responseObject.OdataCount;
+				}
+
+				// Calculate TotalPages
+				result.TotalPages = (int)Math.Ceiling((double)TotalRecords / numOfRecords);
 			}
 
-			return carBrands;
+			return result;
 		}
 
 
