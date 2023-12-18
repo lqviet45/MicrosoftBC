@@ -4,7 +4,7 @@ namespace BCTest.Models
 {
     public class Product
     {
-        public long Id { get; set; }
+        public long ProductID { get; set; }
         public required string ProductName { get; set; }
         public required string ProductDescription { get; set; }
         public decimal Price { get; set; }
