@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_3c35f4391ecf459fbfaa9a76510dad02 }}/lqviet455/bc_connect_api:latest
+        tags: index.docker.io/lqviet455/bc_connect_api:latest
         file: ./Dockerfile
 
   deploy:
@@ -48,4 +48,4 @@ jobs:
         app-name: 'Business-Central'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_ac9c0096f7b64d83826d5892fc5ab178 }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_3c35f4391ecf459fbfaa9a76510dad02 }}/lqviet455/bc_connect_api:latest'
+        images: 'index.docker.io/lqviet455/bc_connect_api:latest'
