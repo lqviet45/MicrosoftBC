@@ -115,7 +115,7 @@ namespace BCTest.Services
 
 
         public async Task<CarBrand?> UpdateCarBrand(CarBrand carBrand)
-        {
+        {    
             await _tokenApplicationServices.GetBCConectionToken();
 
 			var url = $"/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands({carBrand.Id})";

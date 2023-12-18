@@ -52,7 +52,8 @@ namespace BCTest.Services
         public async Task<string> CreateBCConectToken()
         {
 
-            string[] scope = ["https://api.businesscentral.dynamics.com/.default"];
+            string[] scope = ["https://api.businesscentral.dynamics.com/API.ReadWrite.All",
+                "https://api.businesscentral.dynamics.com/Automation.ReadWrite.All"];
 
             var result = await _confidentialClientApplication.AcquireTokenForClient(scope).ExecuteAsync();
             string token = result.AccessToken;

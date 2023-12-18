@@ -1,0 +1,7 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  web_api:
+    image: lqviet455/bc_connect_api:latest
+    container_name: web_docker_bcapi
+    ports:
+      - "5054:8080"
