@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<TokenServices>();
 builder.Services.AddScoped<CarBrandServices>();
 builder.Services.AddScoped<TokenApplicationServices>();
+builder.Services.AddScoped<ProductServices>();
 
 builder.Services.AddCors(options =>
 {

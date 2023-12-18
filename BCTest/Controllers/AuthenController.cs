@@ -5,9 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BCTest.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthenController : ControllerBase
+    public class AuthenController : CustomControllerBase
     {
         private readonly TokenServices _tokenServices;
 

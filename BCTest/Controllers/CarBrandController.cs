@@ -5,9 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BCTest.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CarBrandController : ControllerBase
+    public class CarBrandController : CustomControllerBase
     {
         private readonly CarBrandServices _carBrandServices;
         private readonly TokenServices _tokenServices;
