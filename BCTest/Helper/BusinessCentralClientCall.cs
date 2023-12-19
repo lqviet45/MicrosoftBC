@@ -22,7 +22,7 @@ namespace BCTest.Helper
                     resopnse = await httpClient.GetAsync(url);
                     break;
                 case Method.POST:
-                    json = JsonConvert.SerializeObject(obj);
+                    json = JsonConvert.SerializeObject(obj as T );
                     data = new StringContent(json, Encoding.UTF8, "application/json");
                     resopnse = await httpClient.PostAsync(url, data);
                     break;

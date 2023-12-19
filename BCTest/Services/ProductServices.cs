@@ -6,35 +6,35 @@ using System.Text;
 
 namespace BCTest.Services
 {
-    public class ProductServices
-    {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly string BaseUri = "https://api.businesscentral.dynamics.com/v2.0/873a7c07-4a74-4222-a9a0-22c8560049e0";
-        private readonly TokenApplicationServices _tokenApplicationServices;
+	public class ProductServices
+	{
+		private readonly IHttpClientFactory _httpClientFactory;
+		private readonly string BaseUri = "https://api.businesscentral.dynamics.com/v2.0/873a7c07-4a74-4222-a9a0-22c8560049e0";
+		private readonly TokenApplicationServices _tokenApplicationServices;
 
-        public ProductServices(IHttpClientFactory httpClientFactory, TokenServices tokenServices, TokenApplicationServices tokenApplicationServices)
-        {
-            _httpClientFactory = httpClientFactory;
-            _tokenApplicationServices = tokenApplicationServices;
-        }
+		public ProductServices(IHttpClientFactory httpClientFactory, TokenServices tokenServices, TokenApplicationServices tokenApplicationServices)
+		{
+			_httpClientFactory = httpClientFactory;
+			_tokenApplicationServices = tokenApplicationServices;
+		}
 
-        public async Task<Product?> GetProductByBarcode(string barcode)
-        {
-            await _tokenApplicationServices.GetBCConectionToken();
-            string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products?$filter=barcode eq '{barcode}'";
-            var uri = new Uri(BaseUri + url);
+		public async Task<Product?> GetProductByBarcode(string barcode)
+		{
+			await _tokenApplicationServices.GetBCConectionToken();
+			string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products?$filter=barcode eq '{barcode}'";
+			var uri = new Uri(BaseUri + url);
 
-            var client = _httpClientFactory.CreateClient();
+			var client = _httpClientFactory.CreateClient();
 
-            var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.GET);
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadAsStringAsync();
-                var resopnse = JsonConvert.DeserializeObject<Response<List<Product>>>(data);
-                return resopnse?.Value?.First();
-            }
-            return null;
-        }
+			var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.GET);
+			if (response.IsSuccessStatusCode)
+			{
+				var data = await response.Content.ReadAsStringAsync();
+				var resopnse = JsonConvert.DeserializeObject<Response<List<Product>>>(data);
+				return resopnse?.Value?.First();
+			}
+			return null;
+		}
 
 		public async Task<(List<Product>, int)> GetPagedProduct(int numOfRecords, int currentPage, string? orderBy = null, string? orderString = null, string? filterBy = null, string? filterString = null)
 		{
@@ -48,7 +48,7 @@ namespace BCTest.Services
 			// Add OrderBy to the URL if provided
 			urlBuilder.Append($"&$orderby={orderBy}");
 
-			if(!string.IsNullOrWhiteSpace(orderString) || (orderString == "asc" || orderString == "desc"))
+			if (!string.IsNullOrWhiteSpace(orderString) || (orderString == "asc" || orderString == "desc"))
 			{
 				urlBuilder.Append($" {orderString}");
 			}
@@ -87,7 +87,7 @@ namespace BCTest.Services
 				}
 
 				// Calculate TotalPages
-				 TotalPages = (int)Math.Ceiling((double)TotalRecords / numOfRecords);
+				TotalPages = (int)Math.Ceiling((double)TotalRecords / numOfRecords);
 			}
 
 			return (listResponse, TotalPages);
@@ -97,13 +97,13 @@ namespace BCTest.Services
 		{
 			await _tokenApplicationServices.GetBCConectionToken();
 			string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products({productId})";
-            var uri = new Uri(BaseUri + url);
+			var uri = new Uri(BaseUri + url);
 			var client = _httpClientFactory.CreateClient();
 			var product = new
 			{
 				Barcode = barcode
 			};
-			
+
 			var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.PUT, product);
 
 			if (response.IsSuccessStatusCode)
@@ -116,10 +116,10 @@ namespace BCTest.Services
 
 		public async Task<bool> DeleteProduct(long productId)
 		{
-            await _tokenApplicationServices.GetBCConectionToken();
-            string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products({productId})";
-            var uri = new Uri(BaseUri + url);
-            var client = _httpClientFactory.CreateClient();
+			await _tokenApplicationServices.GetBCConectionToken();
+			string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products({productId})";
+			var uri = new Uri(BaseUri + url);
+			var client = _httpClientFactory.CreateClient();
 			var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.DELETE);
 
 			if (response.IsSuccessStatusCode)
@@ -128,6 +128,52 @@ namespace BCTest.Services
 			}
 
 			return false;
-        }
-    }
+		}
+
+		public async Task<Product?> InsertProduct(Product product)
+		{
+			await _tokenApplicationServices.GetBCConectionToken();
+			string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products";
+			var uri = new Uri(BaseUri + url);
+			var client = _httpClientFactory.CreateClient();
+			var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.POST, product);
+			if (response.IsSuccessStatusCode)
+			{
+				var data = await response.Content.ReadAsStringAsync();
+				var resopnse = JsonConvert.DeserializeObject<Product>(data);
+				return resopnse;
+			}
+			else
+			{
+				return null;
+			}
+		}
+
+		public async Task<bool> UpdateProduct(Product product)
+		{
+			await _tokenApplicationServices.GetBCConectionToken();
+			string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products({product.ProductID})";
+			var uri = new Uri(BaseUri + url);
+			var client = _httpClientFactory.CreateClient();
+
+			var obj = new
+			{
+				product.ProductName,
+				product.ProductDescription,
+				product.Price,
+			};
+
+			var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.PUT, obj);
+			if (response.IsSuccessStatusCode)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+	}
+
 }

@@ -1,4 +1,5 @@
-﻿using BCTest.Services;
+﻿using BCTest.Models;
+using BCTest.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,7 +46,7 @@ namespace BCTest.Controllers
 			// Call the service method to get the paged car brands
 			var response = await _productServices.GetPagedProduct(actualPageSize, actualPage, actualOrderBy, actualOrderString,actualFilterBy, filterString);
 
-			// Handle the response from the service
+			// Handle the isSuccess from the service
 			if (response.Item1.Count > 0)
 			{
 				return Ok(new { ProductList = response.Item1, TotalPage = response.Item2});
@@ -76,5 +77,29 @@ namespace BCTest.Controllers
             }
             return BadRequest();
         }
+
+        [HttpPost]
+        public async Task<IActionResult> InsertProduct(Product product)
+        {
+			var isSuccess = await _productServices.InsertProduct(product);
+            if (isSuccess is not null)
+            {
+                return Ok(isSuccess);
+            }
+            return BadRequest();
+		}
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateProduct(Product product)
+        {
+            var isSuccess = await _productServices.UpdateProduct(product);
+            if (isSuccess)
+            {
+                return Ok(isSuccess);
+            }
+            return BadRequest();
+        }
+
+
     }
 }

@@ -10,6 +10,6 @@ namespace BCTest.Models
         public decimal Price { get; set; }
         public string? Barcode { get; set; }
         public DateTime CreateDate { get; set; }
-        public int Stock { get; set; }
+        //public int Stock { get; set; }
     }
 }

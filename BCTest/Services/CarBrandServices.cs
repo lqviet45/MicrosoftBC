@@ -92,7 +92,7 @@ namespace BCTest.Services
 			var url = "/Sandbox/api/phuong/demo/v2.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/carBrands";
 			var client = _httpClientFactory.CreateClient();
 			client.BaseAddress = new Uri(BaseUri + url);
-			client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.BusinessCentralAccessToken}");
+			//client.DefaultRequestHeaders.Add("Authorization", $"Bearer {AuthenTokenModel.BusinessCentralAccessToken}");
 
 			var json = JsonConvert.SerializeObject(carBrand);
 			var data = new StringContent(json, Encoding.UTF8, "application/json");
