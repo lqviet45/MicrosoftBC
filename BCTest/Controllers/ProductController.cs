@@ -1,4 +1,5 @@
 ﻿using BCTest.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BCTest.Controllers
@@ -12,6 +13,7 @@ namespace BCTest.Controllers
             _productServices = productServices;
         }
 
+        [Authorize(Roles = "Manager,User")]
         [HttpGet("{barcode}")]
         public async Task<IActionResult> GetAProduct(string barcode)
         {
@@ -22,6 +24,7 @@ namespace BCTest.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles = "Manager,User")]
         [HttpGet]
         public async Task<IActionResult> GetPagedProduct(int? numOfRecords, int? currentPage, string? orderBy = null, string? orderString = null, string? filterBy = null, string? filterString = null)
         {
@@ -51,5 +54,27 @@ namespace BCTest.Controllers
 			return BadRequest("Failed to retrieve data");
 		}
 
+        [Authorize(Roles = "Manager,User")]
+        [HttpPatch("{productId}")]
+        public async Task<IActionResult> PatchProduct(long productId, string barcode)
+        {
+            var isSuccess = await _productServices.SetProductBarcodeAsync(productId, barcode);
+            if (isSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+
+        [HttpDelete("{productId}")]
+        public async Task<IActionResult> DeleteProduct(long productId)
+        {
+            var isSuccess = await _productServices.DeleteProduct(productId);
+            if (isSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
     }
 }

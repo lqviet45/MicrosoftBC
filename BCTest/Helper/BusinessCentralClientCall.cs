@@ -6,7 +6,7 @@ namespace BCTest.Helper
 {
     public static class BusinessCentralClientCall<T> where T : class
     {
-        public static async Task<HttpResponseMessage> CallApi(HttpClient httpClient, Uri url, Method method, T? obj = null)
+        public static async Task<HttpResponseMessage> CallApi(HttpClient httpClient, Uri url, Method method, object? obj = null)
         {
             if ((method == Method.PUT || method == Method.POST) && obj is null)
             {
@@ -30,7 +30,7 @@ namespace BCTest.Helper
                     httpClient.DefaultRequestHeaders.Add("If-Match", "*");
                     json = JsonConvert.SerializeObject(obj);
                     data = new StringContent(json, Encoding.UTF8, "application/json");
-                    resopnse = await httpClient.PostAsync(url, data);
+                    resopnse = await httpClient.PutAsync(url, data);
                     break;
                 case Method.DELETE:
                     resopnse = await httpClient.DeleteAsync(url);

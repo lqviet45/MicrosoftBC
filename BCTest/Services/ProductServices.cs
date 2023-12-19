@@ -93,5 +93,41 @@ namespace BCTest.Services
 			return (listResponse, TotalPages);
 		}
 
-	}
+		public async Task<bool> SetProductBarcodeAsync(long productId, string barcode)
+		{
+			await _tokenApplicationServices.GetBCConectionToken();
+			string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products({productId})";
+            var uri = new Uri(BaseUri + url);
+			var client = _httpClientFactory.CreateClient();
+			var product = new
+			{
+				Barcode = barcode
+			};
+			
+			var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.PUT, product);
+
+			if (response.IsSuccessStatusCode)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public async Task<bool> DeleteProduct(long productId)
+		{
+            await _tokenApplicationServices.GetBCConectionToken();
+            string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products({productId})";
+            var uri = new Uri(BaseUri + url);
+            var client = _httpClientFactory.CreateClient();
+			var response = await BusinessCentralClientCall<Product>.CallApi(client, uri, Method.DELETE);
+
+			if (response.IsSuccessStatusCode)
+			{
+				return true;
+			}
+
+			return false;
+        }
+    }
 }
