@@ -21,7 +21,7 @@ namespace BCTest.Services
         public async Task<Product?> GetProductByBarcode(string barcode)
         {
             await _tokenApplicationServices.GetBCConectionToken();
-            string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products('{barcode}')";
+            string url = $"/Sandbox/api/phuong/demo/v1.0/companies(3104717a-5377-ee11-817e-6045bdacaca5)/Products?$filter=barcode eq '{barcode}'";
             var uri = new Uri(BaseUri + url);
 
             var client = _httpClientFactory.CreateClient();
@@ -30,8 +30,8 @@ namespace BCTest.Services
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
-                var product = JsonConvert.DeserializeObject<Product>(data);
-                return product;
+                var resopnse = JsonConvert.DeserializeObject<Response<List<Product>>>(data);
+                return resopnse?.Value?.First();
             }
             return null;
         }
