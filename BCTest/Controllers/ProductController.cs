@@ -1,4 +1,6 @@
-﻿using BCTest.Services;
+﻿using BCTest.Models;
+using BCTest.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BCTest.Controllers
@@ -12,6 +14,7 @@ namespace BCTest.Controllers
             _productServices = productServices;
         }
 
+        [Authorize(Roles = "Manager,User")]
         [HttpGet("{barcode}")]
         public async Task<IActionResult> GetAProduct(string barcode)
         {
@@ -22,6 +25,7 @@ namespace BCTest.Controllers
             return Ok(product);
         }
 
+        [Authorize(Roles = "Manager,User")]
         [HttpGet]
         public async Task<IActionResult> GetPagedProduct(int? numOfRecords, int? currentPage, string? orderBy = null, string? orderString = null, string? filterBy = null, string? filterString = null)
         {
@@ -42,7 +46,7 @@ namespace BCTest.Controllers
 			// Call the service method to get the paged car brands
 			var response = await _productServices.GetPagedProduct(actualPageSize, actualPage, actualOrderBy, actualOrderString,actualFilterBy, filterString);
 
-			// Handle the response from the service
+			// Handle the isSuccess from the service
 			if (response.Item1.Count > 0)
 			{
 				return Ok(new { ProductList = response.Item1, TotalPage = response.Item2});
@@ -50,6 +54,52 @@ namespace BCTest.Controllers
 
 			return BadRequest("Failed to retrieve data");
 		}
+
+        [Authorize(Roles = "Manager,User")]
+        [HttpPatch("{productId}")]
+        public async Task<IActionResult> PatchProduct(long productId, string barcode)
+        {
+            var isSuccess = await _productServices.SetProductBarcodeAsync(productId, barcode);
+            if (isSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+
+        [HttpDelete("{productId}")]
+        public async Task<IActionResult> DeleteProduct(long productId)
+        {
+            var isSuccess = await _productServices.DeleteProduct(productId);
+            if (isSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> InsertProduct(Product product)
+        {
+			var isSuccess = await _productServices.InsertProduct(product);
+            if (isSuccess is not null)
+            {
+                return Ok(isSuccess);
+            }
+            return BadRequest();
+		}
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateProduct(Product product)
+        {
+            var isSuccess = await _productServices.UpdateProduct(product);
+            if (isSuccess)
+            {
+                return Ok(isSuccess);
+            }
+            return BadRequest();
+        }
+
 
     }
 }
